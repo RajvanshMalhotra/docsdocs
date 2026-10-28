@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+/* Palette from the roadside: sign green, lane-marking yellow, asphalt, and a cool
+   overcast paper for everything below the sky. The sky itself is computed from temperature. */
+:root {
+  --paper: #f2f4f1;
+  --ink: #1f2328;
+  --muted: #5b646d;
+  --rule: #d3d8d2;
+  --sign: #00653f;
+  --lane: #f2b705;
+  --asphalt: #2e3034;
+  --post: #8a9096;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #15181b;
+    --ink: #e7e9e5;
+    --muted: #9aa3ab;
+    --rule: #2b3035;
+    --asphalt: #26282c;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-sign: var(--sign);
+  --color-lane: var(--lane);
+  --color-asphalt: var(--asphalt);
+  --color-post: var(--post);
+  --font-sans: var(--font-overpass), "Helvetica Neue", system-ui, sans-serif;
+}
+
+@layer base {
+  html,
+  body {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    margin: 0;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 3px solid var(--lane);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .gutter {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Controls that sit on the sky take their color from the computed text color. */
+  .on-sky-line {
+    border: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+  }
+  .on-sky-fill {
+    background: color-mix(in srgb, currentColor 9%, transparent);
+  }
+
+  /* Thermometer slider: the track is the same sky scale the page uses. */
+  .thermo {
+    appearance: none;
+    width: 100%;
+    height: 32px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .thermo::-webkit-slider-runnable-track {
+    height: 14px;
+    border-radius: 99px;
+    background: var(--thermo);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 25%, transparent);
+  }
+  .thermo::-moz-range-track {
+    height: 14px;
+    border-radius: 99px;
+    background: var(--thermo);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 25%, transparent);
+  }
+  .thermo::-webkit-slider-thumb {
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    margin-top: -8px;
+    border-radius: 50%;
+    background: #fff;
+    border: 4px solid var(--asphalt);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+  }
+  .thermo::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 4px solid var(--asphalt);
+  }
+
+  .road-dash {
+    background: repeating-linear-gradient(90deg, var(--lane) 0 34px, transparent 34px 60px);
+  }
+  .lost-hatch {
+    background: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.16) 0 7px, transparent 7px 14px);
+  }
+
+  /* Highway sign: green field, inset white border, rounded corners. */
+  .sign-plate {
+    background: var(--sign);
+    color: #fff;
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.45);
+  }
+  .sign-plate > .sign-face {
+    border: 3px solid #fff;
+    border-radius: 10px;
+  }
+}
+
+/* Size the big temperature field to its digits where the browser can; the ch-based width is the fallback. */
+@supports (field-sizing: content) {
+  .temp-input {
+    field-sizing: content;
+    width: auto !important;
+    min-width: 1ch;
+  }
+}
+
+/* Remove number-input spinners; the page has its own stepper buttons. */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
